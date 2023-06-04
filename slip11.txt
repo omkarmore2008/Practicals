@@ -70,121 +70,143 @@ public void onClick(View v) {
 Q2A)
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-int main() {
-  // Declare a variable of type int[]
-  int *arr;
+// Structure of type student
+struct student {
+int stud_id;
+int name_len;
+int struct_size;
+char stud_name[0];
+    // variable length array must be
+    // last.
+};
 
-  // Allocate memory for the array using alloca()
-  arr = alloca(sizeof(int) * 10);
+// Memory allocation and initialisation of structure
+struct student* createStudent(struct student* s, int id,
+char a[])
+{
+    s = alloca(sizeof(*s) + sizeof(char) * strlen(a));
 
-  // Initialize the elements of the array
-  for (int i = 0; i < 10; i++) {
-    arr[i] = i + 1;
-  }
+s->stud_id = id;
+s->name_len = strlen(a);
+strcpy(s->stud_name, a);
 
-  // Print the elements of the array
-  for (int i = 0; i < 10; i++) {
-    printf("%d\n", arr[i]);
-  }
+s->struct_size
+        = (sizeof(*s)
+           + sizeof(char) * strlen(s->stud_name));
 
-  // Free the memory allocated by alloca()
-  free(arr);
-
-  return 0;
+return s;
 }
 
+// Print student details
+void printStudent(struct student* s)
+{
+printf("Student_id : %d\n"
+           "Stud_Name : %s\n"
+           "Name_Length: %d\n"
+           "Allocated_Struct_size: %d\n\n",
+s->stud_id, s->stud_name, s->name_len,
+s->struct_size);
+
+    // Value of Allocated_Struct_size here is in bytes.
+}
+
+// Driver Code
+int main()
+{
+struct student *s1, *s2;
+
+    s1 = createStudent(s1, 523, "Sanjayulsha");
+    s2 = createStudent(s2, 535, "Cherry");
+
+printStudent(s1);
+printStudent(s2);
+
+    // size in bytes
+printf("Size of Struct student: %lu\n",
+sizeof(struct student));
+    // size in bytes
+printf("Size of Struct pointer: %lu", sizeof(s1));
+
+return 0;
+}
+
+
 Q2B)
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/wait.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h>
+char *buff,*t1,*t2,*t3,ch;
+FILE *fp;
+int pid;
+void count(char *t2,char *t3)
+{
+int charcount=0,wordcount=0,linecount=0;
+if((fp=fopen(t3,"r"))==NULL)
+	printf("File not found");
+else
+  {
+	while((ch=fgetc(fp))!=EOF)
+	{
+	if(ch==' ')
+	wordcount++;
+	else if(ch=='\n')
+	{
+	linecount++;
+	wordcount++;
+	
+	}
+	else
+	charcount++;
+	}
 
-int main() {
-  char *prompt = "NewShell$ ";
-  char command[1024];
-  int status;
+fclose(fp);
+if(strcmp(t2,"c")==0)
+	printf("The total no. of characters :%d\n",charcount);
+else if(strcmp(t2,"w")==0)
+printf("The total no. of words :%d\n",wordcount);
+else if(strcmp(t2,"l")==0)
+printf("The total no. of lines :%d\n",linecount);
+else
+	printf("Command not found");
+ }
 
-  while (1) {
-    printf("%s", prompt);
-    fgets(command, 1024, stdin);
+}
+main()
+{
+while(1)
+   {
+	printf("myshell$");
+	fflush(stdin);
+	t1=(char *)malloc(80);
+	t2=(char *)malloc(80);
+	t3=(char *)malloc(80);
 
-    // Check if the user wants to exit the shell
-    if (strcmp(command, "exit") == 0) {
-      break;
+	buff=(char *)malloc(80);
+	fgets(buff,80,stdin);   	
+	sscanf(buff,"%s %s %s",t1,t2,t3);
+	if(strcmp(t1,"pause")==0)
+	exit(0);
+	else if(strcmp(t1,"count")==0)
+	count(t2,t3);
+	else
+	{
+	pid=fork();
+	if(pid<0)
+	printf("Child process is not created\n");
+	else if(pid==0)
+	{          	
+	execlp("/bin",NULL);
+	if(strcmp(t1,"exit")==0)
+	exit(0);
+	system(buff);
+	}
+	else
+	{          	
+	wait(NULL);
+	exit(0);
+	}
+	}
     }
-
-    // Parse the command
-    char *args[10];
-    int num_args = 0;
-
-    for (char *token = strtok(command, " "); token != NULL; token = strtok(NULL, " ")) {
-      args[num_args++] = token;
-    }
-
-    // Execute the command
-    if (num_args == 1) {
-      // Execute the command as a system command
-      int pid = fork();
-      if (pid == 0) {
-        execvp(args[0], args);
-        perror("execvp");
-        exit(1);
-      } else {
-        wait(&status);
-      }
-    } else if (strcmp(args[0], "count") == 0) {
-      // Count the number of characters, words, or lines in a file
-      if (strcmp(args[1], "c") == 0) {
-        int count = 0;
-        FILE *file = fopen(args[2], "r");
-        if (file != NULL) {
-          char c;
-          while ((c = fgetc(file)) != EOF) {
-            count++;
-          }
-          fclose(file);
-        }
-        printf("Number of characters: %d\n", count);
-      } else if (strcmp(args[1], "w") == 0) {
-        int count = 0;
-        FILE *file = fopen(args[2], "r");
-        if (file != NULL) {
-          char c;
-          while ((c = fgetc(file)) != EOF) {
-            if (c == '\n') {
-              count++;
-            }
-          }
-          fclose(file);
-        }
-        printf("Number of words: %d\n", count);
-      } else if (strcmp(args[1], "l") == 0) {
-        int count = 0;
-        FILE *file = fopen(args[2], "r");
-        if (file != NULL) {
-          char c;
-          while ((c = fgetc(file)) != EOF) {
-            if (c == '\n') {
-              count++;
-            }
-          }
-          fclose(file);
-        }
-        printf("Number of lines: %d\n", count);
-      }
-    } else {
-      // The command is not built-in, so execute it as a system command
-      int pid = fork();
-      if (pid == 0) {
-        execvp(args[0], args);
-        perror("execvp");
-        exit(1);
-      } else {
-        wait(&status);
-      }
-    }
-  }
-
-  return 0;
 }

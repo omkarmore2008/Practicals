@@ -274,40 +274,17 @@ android:exported="true">
 
 
 Q2A
-// C program to check a file is a directory or not
-
 #include <stdio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
-
-int isDir(const char* fileName)
+int main(int argc, char *argv[])
 {
-    struct stat path;
+	if (access(argv[1],F_OK)==0)
+	printf("File %s exists", argv[1]);
+	else
+	printf("File %s doesn't exist.", argv[1]);
 
-    stat(fileName, &path);
-
-    return S_ISREG(path.st_mode);
+	return 0;
 }
-
-int main()
-{
-    char fileName[16];
-    int ret = 0;
-
-    printf("Enter filename: ");
-    scanf("%s", fileName);
-
-    ret = isDir(fileName);
-
-    if (ret == 0)
-        printf("Given file is a directory\n");
-    else
-        printf("Given file is not a directory\n");
-
-    return 0;
-}
-
 
 
 

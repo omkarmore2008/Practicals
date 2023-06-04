@@ -1,0 +1,156 @@
+Q1A
+
+Q. Write an Android Program to Change the Image Displayed on the Screen
+Activity.java :
+package com.example.slip5_1;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.*;
+public class MainActivity extends AppCompatActivity {
+private ImageView imageView;
+private Button changeButton;
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+imageView = findViewById(R.id.imageView);
+changeButton = findViewById(R.id.changeButton);
+changeButton.setOnClickListener(new View.OnClickListener() {
+@Override
+public void onClick(View v) {
+// Change the image resource
+imageView.setImageResource(R.drawable.adv);
+}
+});
+}
+}
+Activity.xml :
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools">
+<application
+android:allowBackup="true"
+android:dataExtractionRules="@xml/data_extraction_rules"
+android:fullBackupContent="@xml/backup_rules"
+android:icon="@mipmap/ic_launcher"
+android:label="@string/app_name"
+android:supportsRtl="true"
+android:theme="@style/Theme.Slip5_1"
+tools:targetApi="31">
+<activity
+android:name=".MainActivity"
+android:exported="true">
+<intent-filter>
+<action android:name="android.intent.action.MAIN" />
+<category android:name="android.intent.category.LAUNCHER"
+/>
+</intent-filter>
+</activity>
+</application>
+</manifest>
+
+
+
+Q1B
+import UIKit
+
+class ViewController: UIViewController {
+
+    @IBOutlet weak var lightBulb: UIImageView!
+    @IBOutlet weak var switchButton: UISwitch!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        lightBulb.image = UIImage(named: "lightbulb_off")
+    }
+
+    @IBAction func switchButtonTapped(_ sender: UISwitch) {
+        if sender.isOn {
+            lightBulb.image = UIImage(named: "lightbulb_on")
+        } else {
+            lightBulb.image = UIImage(named: "lightbulb_off")
+        }
+    }
+}
+
+
+Q2A
+#include<stdio.h>
+#include<unistd.h>
+
+int main() {
+	int pipefds[2];
+	int returnstatus;
+	char writemessages[3][20]={"Hello World", "Hello SPPU","Linux is Funny"};
+	char readmessage[20];
+	returnstatus = pipe(pipefds);
+
+	if (returnstatus == -1) {
+	printf("Unable to create pipe\n");
+	return 1;
+	}
+	int child = fork();
+	if(child==0){
+	printf("Child is Writing to pipe - Message 1 is %s\n", writemessages[0]);
+	write(pipefds[1], writemessages[0], sizeof(writemessages[0]));
+	printf("Child is Writing to pipe - Message 2 is %s\n", writemessages[1]);
+	write(pipefds[1], writemessages[1], sizeof(writemessages[1]));
+	printf("Child is Writing to pipe - Message 3 is %s\n", writemessages[2]);
+	write(pipefds[1], writemessages[2], sizeof(writemessages[2]));
+	}
+	else
+	{
+	read(pipefds[0], readmessage, sizeof(readmessage));
+	printf("Parent Process is Reading from pipe – Message 1 is %s\n", readmessage);
+	read(pipefds[0], readmessage, sizeof(readmessage));
+	printf("Parent Process is Reading from pipe – Message 2 is %s\n", readmessage);
+	read(pipefds[0], readmessage, sizeof(readmessage));
+	printf("Parent Process is Reading from pipe – Message 3 is %s\n", readmessage);
+	}    	
+}
+
+
+
+Q2B
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <dirent.h>
+#include <string.h>
+
+int main() {
+  // Get the current directory
+  char *current_directory = getcwd(NULL, 0);
+
+  // Create a pointer to the new file
+  FILE *new_file = fopen("merged.txt", "w");
+
+  // Iterate through all the files in the current directory
+  DIR *directory = opendir(current_directory);
+  struct dirent *file;
+  while ((file = readdir(directory)) != NULL) {
+    // Check if the file is a txt file
+    if (strstr(file->d_name, ".txt") != NULL) {
+      // Open the file
+      FILE *current_file = fopen(file->d_name, "r");
+
+      // Read the contents of the file
+      char line[1024];
+      while (fgets(line, sizeof(line), current_file) != NULL) {
+        // Write the contents of the file to the new file
+        fprintf(new_file, "%s", line);
+      }
+
+      // Close the file
+      fclose(current_file);
+    }
+  }
+
+  // Close the new file
+  fclose(new_file);
+
+  // Return the file descriptor for the new file
+  return fileno(new_file);
+}

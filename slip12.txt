@@ -81,41 +81,46 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 }
+
+
 Q2A)
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <signal.h>
+#include <fcntl.h>
 #include <unistd.h>
-
-void alarm_handler(int signo) {
-  printf("Alarm is fired!\n");
+#include <stdio.h>
+#include<signal.h>
+#include<sys/types.h>
+#include<sys/wait.h>
+#include <stdlib.h>
+void Dingdong()
+{
+	printf("Ding!");
+	exit(1);
+	
 }
-
-int main() {
-  pid_t pid;
-
-  // Fork a child process.
-  pid = fork();
-
-  if (pid == 0) {
-    // In the child process, sleep for 5 seconds and then send SIGALRM to the parent process.
-    sleep(5);
-    kill(getppid(), SIGALRM);
-    exit(0);
-  } else {
-    // In the parent process, set up a signal handler for SIGALRM.
-    signal(SIGALRM, alarm_handler);
-
-    // Wait for the child process to finish.
-    wait(NULL);
-
-    // Print a message to indicate that the alarm has been fired.
-    printf("Alarm has been fired!\n");
-
-    return 0;
+int main(int argc, char *argv[])
+{ 
+if(argc!=3)
+	{
+	printf("How much seconds you want to sleep the child process\n");
+	}
+	int PauseSecond=(argv[1]);
+	    {
+	if(fork()==0)
+	{
+	printf("waiting for alarm to go off\n"); 
+printf("%d second pause",PauseSecond);
+	sleep(PauseSecond);
+	kill(getpid(),SIGALRM);
+	}
+	else {
+	printf("Alarm application starting\n", getpid()); 
+signal(SIGALRM,Dingdong);
+	printf("done");
+	}
+	}  
   }
-}
+
 
 Q2B)
 #include <stdio.h>
