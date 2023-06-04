@@ -1,0 +1,190 @@
+Q1 A)
+
+func triple_sum(a: Int, b: Int) -> Int {
+    if a == b 
+     {
+        return (a + b) * 3
+     }
+     else 
+     {
+        return a + b
+     }
+ }
+
+ print(triple_sum(a: 1, b: 2))   
+print(triple_sum(a: 3, b: 2)) 
+print(triple_sum(a: 2, b: 2))
+
+Q1B)
+package com.droidacid.apticalc.aptitudes;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import com.droidacid.apticalc.R;
+
+public class AptiFactorial extends Activity implements android.view.View.OnClickListener{
+EditText number;
+TextView answer;
+Button calculate;
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.apti_factorial);
+    initialize();
+}
+
+private void initialize() {
+    number = (EditText) findViewById(R.id.et_apti_number);
+    number.setHint("Enter number to be factorialized :P")
+    answer = (TextView) findViewById(R.id.tv_apti_answer);
+    calculate = (Button) findViewById(R.id.b_apti_calc);
+    calculate.setOnClickListener(this);
+}
+
+private long calcFactorial() {
+
+    long factorial = 1;
+    try {
+        factorial = Long.parseLong(number.getText().toString());
+        for(int i=factorial-1; i>0; i--){
+            factorial = i * factorial;
+        }
+    } catch (NumberFormatException e) {
+        Toast.makeText(this, "Incorrect Input", Toast.LENGTH_LONG).show();
+    } finally {}
+
+    return factorial;
+}
+
+@Override
+public void onClick(View v) {
+    answer.setText("Factorial of " + number.getText().toString() + " is : " + calcFactorial());
+}
+
+Q2A)
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+  // Declare a variable of type int[]
+  int *arr;
+
+  // Allocate memory for the array using alloca()
+  arr = alloca(sizeof(int) * 10);
+
+  // Initialize the elements of the array
+  for (int i = 0; i < 10; i++) {
+    arr[i] = i + 1;
+  }
+
+  // Print the elements of the array
+  for (int i = 0; i < 10; i++) {
+    printf("%d\n", arr[i]);
+  }
+
+  // Free the memory allocated by alloca()
+  free(arr);
+
+  return 0;
+}
+
+Q2B)
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+int main() {
+  char *prompt = "NewShell$ ";
+  char command[1024];
+  int status;
+
+  while (1) {
+    printf("%s", prompt);
+    fgets(command, 1024, stdin);
+
+    // Check if the user wants to exit the shell
+    if (strcmp(command, "exit") == 0) {
+      break;
+    }
+
+    // Parse the command
+    char *args[10];
+    int num_args = 0;
+
+    for (char *token = strtok(command, " "); token != NULL; token = strtok(NULL, " ")) {
+      args[num_args++] = token;
+    }
+
+    // Execute the command
+    if (num_args == 1) {
+      // Execute the command as a system command
+      int pid = fork();
+      if (pid == 0) {
+        execvp(args[0], args);
+        perror("execvp");
+        exit(1);
+      } else {
+        wait(&status);
+      }
+    } else if (strcmp(args[0], "count") == 0) {
+      // Count the number of characters, words, or lines in a file
+      if (strcmp(args[1], "c") == 0) {
+        int count = 0;
+        FILE *file = fopen(args[2], "r");
+        if (file != NULL) {
+          char c;
+          while ((c = fgetc(file)) != EOF) {
+            count++;
+          }
+          fclose(file);
+        }
+        printf("Number of characters: %d\n", count);
+      } else if (strcmp(args[1], "w") == 0) {
+        int count = 0;
+        FILE *file = fopen(args[2], "r");
+        if (file != NULL) {
+          char c;
+          while ((c = fgetc(file)) != EOF) {
+            if (c == '\n') {
+              count++;
+            }
+          }
+          fclose(file);
+        }
+        printf("Number of words: %d\n", count);
+      } else if (strcmp(args[1], "l") == 0) {
+        int count = 0;
+        FILE *file = fopen(args[2], "r");
+        if (file != NULL) {
+          char c;
+          while ((c = fgetc(file)) != EOF) {
+            if (c == '\n') {
+              count++;
+            }
+          }
+          fclose(file);
+        }
+        printf("Number of lines: %d\n", count);
+      }
+    } else {
+      // The command is not built-in, so execute it as a system command
+      int pid = fork();
+      if (pid == 0) {
+        execvp(args[0], args);
+        perror("execvp");
+        exit(1);
+      } else {
+        wait(&status);
+      }
+    }
+  }
+
+  return 0;
+}

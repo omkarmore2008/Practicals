@@ -1,0 +1,159 @@
+Q1A)
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+
+    private MapView mapView;
+    private GoogleMap googleMap;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        mapView = findViewById(R.id.mapView);
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+
+        // Zoom in
+        googleMap.moveCamera(CameraUpdateFactory.zoomIn());
+
+        // Zoom out
+        googleMap.moveCamera(CameraUpdateFactory.zoomOut());
+
+        // Switch to satellite view
+        googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+    }
+}
+
+Q1B)
+package com.example.playernameandpoints;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity {
+
+    private EditText playerNameEditText;
+    private EditText pointsEditText;
+    private Button submitButton;
+    private TextView playerNameTextView;
+    private TextView pointsTextView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        playerNameEditText = findViewById(R.id.player_name_edit_text);
+        pointsEditText = findViewById(R.id.points_edit_text);
+        submitButton = findViewById(R.id.submit_button);
+        playerNameTextView = findViewById(R.id.player_name_text_view);
+        pointsTextView = findViewById(R.id.points_text_view);
+
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String playerName = playerNameEditText.getText().toString();
+                int points = Integer.parseInt(pointsEditText.getText().toString());
+
+                playerNameTextView.setText(playerName);
+                pointsTextView.setText(String.valueOf(points));
+            }
+        });
+    }
+}
+Q2A)
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <unistd.h>
+
+void alarm_handler(int signo) {
+  printf("Alarm is fired!\n");
+}
+
+int main() {
+  pid_t pid;
+
+  // Fork a child process.
+  pid = fork();
+
+  if (pid == 0) {
+    // In the child process, sleep for 5 seconds and then send SIGALRM to the parent process.
+    sleep(5);
+    kill(getppid(), SIGALRM);
+    exit(0);
+  } else {
+    // In the parent process, set up a signal handler for SIGALRM.
+    signal(SIGALRM, alarm_handler);
+
+    // Wait for the child process to finish.
+    wait(NULL);
+
+    // Print a message to indicate that the alarm has been fired.
+    printf("Alarm has been fired!\n");
+
+    return 0;
+  }
+}
+
+Q2B)
+#include <stdio.h>
+#include <stdlib.h>
+#include <dirent.h>
+#include <unistd.h>
+
+int main(int argc, char *argv[]) {
+  // Check if the user has provided a value for n.
+  if (argc < 2) {
+    printf("Usage: %s <n>\n", argv[0]);
+    return 1;
+  }
+
+  // Get the value of n.
+  int n = atoi(argv[1]);
+
+  // Declare a pointer to a directory entry.
+  struct dirent *de;
+
+  // Open the current directory.
+  DIR *dr = opendir(".");
+
+  // Iterate over all the files in the directory.
+  while ((de = readdir(dr)) != NULL) {
+    // Check if the file is a regular file.
+    if (de->d_type == DT_REG) {
+      // Check if the file is greater than n bytes in size.
+      if (de->d_size > n) {
+        // Print the name of the file.
+        printf("%s\n", de->d_name);
+      }
+    }
+  }
+
+  // Close the directory.
+  closedir(dr);
+
+  return 0;
+}
+

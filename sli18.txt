@@ -1,0 +1,273 @@
+activity_main.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Date" />
+ 
+    <Button
+        android:id="@+id/btPickDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvDate"
+        android:layout_centerInParent="true"
+        android:text="Pick Date" />
+</RelativeLayout>
+
+DatePicker.java
+ 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import java.util.Calendar;
+ 
+public class DatePicker extends DialogFragment {
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        Calendar mCalendar = Calendar.getInstance();
+        int year = mCalendar.get(Calendar.YEAR);
+        int month = mCalendar.get(Calendar.MONTH);
+        int dayOfMonth = mCalendar.get(Calendar.DAY_OF_MONTH);
+        return new DatePickerDialog(getActivity(), (DatePickerDialog.OnDateSetListener)
+                getActivity(), year, month, dayOfMonth);
+    }
+}
+
+MainActivity.java
+import android.app.DatePickerDialog;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+import java.text.DateFormat;
+import java.util.Calendar;
+ 
+public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
+    TextView tvDate;
+    Button btPickDate;
+ 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        tvDate = findViewById(R.id.tvDate);
+        btPickDate = findViewById(R.id.btPickDate);
+        btPickDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Please note that use your package name here
+                tutorials.droid.datepicker.DatePicker mDatePickerDialogFragment;
+                mDatePickerDialogFragment = new tutorials.droid.datepicker.DatePicker();
+                mDatePickerDialogFragment.show(getSupportFragmentManager(), "DATE PICK");
+            }
+        });
+    }
+ 
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        Calendar mCalendar = Calendar.getInstance();
+        mCalendar.set(Calendar.YEAR, year);
+        mCalendar.set(Calendar.MONTH, month);
+        mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        String selectedDate = DateFormat.getDateInstance(DateFormat.FULL).format(mCalendar.getTime());
+        tvDate.setText(selectedDate);
+    }
+}
+
+
+Q1 B)
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Digital Bio Data</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>Digital Bio Data</h1>
+<div id="data">
+<ul>
+<li>Name: John Doe</li>
+<li>Age: 30</li>
+<li>Gender: Male</li>
+<li>Address: 123 Main Street, Anytown, USA</li>
+<li>Phone: (123) 456-7890</li>
+<li>Email: johndoe@example.com</li>
+</ul>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
+
+style.css
+body {
+  font-family: sans-serif;
+}
+
+h1 {
+  font-size: 2em;
+  margin-bottom: 1em;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  margin-bottom: .5em;
+}
+
+var data = [
+  {
+    "name": "John Doe",
+    "age": 30,
+    "gender": "Male",
+    "address": "123 Main Street, Anytown, USA",
+    "phone": "(123) 456-7890",
+    "email": "johndoe@example.com"
+  }
+];
+
+function loadData() {
+  var ul = document.getElementById("data");
+  for (var i = 0; i < data.length; i++) {
+    var li = document.createElement("li");
+    li.innerHTML = data[i].name + " " + data[i].age + " " + data[i].gender + " " + data[i].address + " " + data[i].phone + " " + data[i].email;
+    ul.appendChild(li);
+  }
+}
+
+window.onload = loadData;
+
+
+
+
+
+Q2 A)
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <time.h>
+
+int main(int argc, char *argv[]) {
+  if (argc != 2) {
+    printf("Usage: %s <file>\n", argv[0]);
+    return 1;
+  }
+
+  struct stat file_stat;
+  if (stat(argv[1], &file_stat) < 0) {
+    perror("stat");
+    return 1;
+  }
+
+  time_t last_access_time = file_stat.st_atime;
+  time_t last_modified_time = file_stat.st_mtime;
+
+  char *last_access_time_str = ctime(&last_access_time);
+  char *last_modified_time_str = ctime(&last_modified_time);
+
+  printf("Last access time: %s\n", last_access_time_str);
+  printf("Last modified time: %s\n", last_modified_time_str);
+
+  return 0;
+}
+
+
+Q2 B)
+#include<stdio.h>
+#include<unistd.h>
+int main()
+{
+    int fd[2],dupFd;
+    char *filename1 ="ls";
+    char *filename2 ="wc";
+    char *arg1 = "-l";
+    pipe(fd);
+    if(!fork())// return 0 for child process and 1 for parent process
+    {
+        close(1); // 1 for closing stdout
+        dup(fd[1]);
+        close(fd[0]);
+        execlp(filename1,filename1,arg1,NULL);
+    }else
+    {
+        close(0);
+        dup(fd[0]);
+        close(fd[1]);
+        execlp(filename2,filename2,arg1,NULL);
+    } 
+}
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <signal.h>
+
+void sigint_handler(int signo) {
+  // Do nothing
+}
+
+int main() {
+  // Block the signal `Ctrl-C`
+  signal(SIGINT, sigint_handler);
+
+  // Create a pipe
+  int pipefd[2];
+  pipe(pipefd);
+
+  // Fork a child process
+  pid_t pid = fork();
+  if (pid == 0) {
+    // Close the write end of the pipe
+    close(pipefd[1]);
+
+    // Redirect the standard output to the read end of the pipe
+    dup2(pipefd[0], 1);
+
+    // Execute the command `ls -l`
+    execlp("ls", "ls", "-l", NULL);
+
+    // If the execution of `ls` fails, exit the child process
+    exit(1);
+  } else {
+    // Close the read end of the pipe
+    close(pipefd[0]);
+
+    // Redirect the standard input of the parent process to the write end of the pipe
+    dup2(pipefd[1], 0);
+
+    // Execute the command `wc -l`
+    execlp("wc", "wc", "-l", NULL);
+
+    // If the execution of `wc` fails, exit the parent process
+    exit(1);
+  }
+
+  // Wait for the child process to finish
+  wait(NULL);
+
+  // Return 0
+  return 0;
+}
